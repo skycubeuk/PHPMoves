@@ -1,4 +1,4 @@
-# PhpMoves, a PHP library for the Moves App API based on PyMoves
+# PHPMoves, a PHP library for the Moves App API based on PyMoves
 
 
 ## Example Usage
