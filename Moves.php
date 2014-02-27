@@ -30,8 +30,9 @@ class Moves
     {
         $u = $this->oauth_url . 'authorize?response_type=code';
         $c = '&client_id=' . urlencode($this->client_id);
+        $r = '&redirect_uri' . urlencode($this->redirect_url);
         $s = '&scope=' . urlencode('activity location'); # Assuming we want both activity and locations
-        $url = $u . $c . $s;
+        $url = $u . $c . $s . $r;
         return $url;
     }
 
@@ -39,7 +40,7 @@ class Moves
     public function auth($request_token)
     {
         $u = $this->oauth_url . "access_token";
-        $d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret);
+        $d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
         $o = array(
             'http' => array(
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n",
