@@ -13,8 +13,13 @@ Open the Moves app and enter the PIN, then you will be redirected the url specif
 
 	$access_token = m->auth();
 
+Validate an access token, returns false if revoked:
+
+	$valid = $m->validate_token($access_token);
+
 If you have an access token you can make requests like:
 
-	$profile = $m->get_profile($access_token);
+        $profile = $m->get_profile($access_token);
+
 
 This will fetch all user info. Other requests are also build in, but beware of the range requests as they have a limit of 7 days.

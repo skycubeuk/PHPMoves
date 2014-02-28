@@ -10,13 +10,12 @@ class Moves
     public $oauth_url;
 
     public function __construct
-            (
+    (
             $client_id, #Client ID, get this by creating an app
             $client_secret, #Client Secret, get this by creating an app
             $redirect_url, #Callback URL for getting an access token
-            $oauth_url = 'https://api.moves-app.com/oauth/v1/', 
-            $api_url = 'https://api.moves-app.com/api/1.1'
-            )
+            $oauth_url = 'https://api.moves-app.com/oauth/v1/', $api_url = 'https://api.moves-app.com/api/1.1'
+    )
     {
         $this->api_url = $api_url;
         $this->oauth_url = $oauth_url;
@@ -34,6 +33,18 @@ class Moves
         $s = '&scope=' . urlencode('activity location'); # Assuming we want both activity and locations
         $url = $u . $c . $s . $r;
         return $url;
+    }
+
+    #Validate access token
+    public function validate_token($token)
+    {
+        $u = $this->oauth_url . 'tokeninfo?access_token=' . $token;
+        $r = $this->get_http_response_code($u);
+        if ($r === "200") {
+            return json_decode(file_get_contents($u), True);
+        } else {
+            return False;
+        }
     }
 
     #Get access_token 
@@ -55,16 +66,15 @@ class Moves
     }
 
     #Base request
-    public function get($token, $endpoint)
+    private function get($token, $endpoint)
     {
         $token = '?access_token=' . $token;
         return json_decode(file_get_contents($this->api_url . $endpoint . $token), True);
     }
 
     #/user/profile
-
     public function get_profile($token)
-    {        
+    {
         $root = '/user/profile';
         return $this->get($token, $root);
     }
@@ -75,13 +85,17 @@ class Moves
     #/user/places/daily
     #/user/storyline/daily
     #date: date in yyyyMMdd or yyyy-MM-dd format
-
     public function get_range($access_token, $endpoint, $start, $end)
     {
-        $export = $this->get($access_token . '&from=' . $start . '&to=' . $end, $endpoint  );
+        $export = $this->get($access_token . '&from=' . $start . '&to=' . $end, $endpoint);
         return $export;
     }
 
-}
+    private function get_http_response_code($url)
+    {
+        $headers = get_headers($url);
+        return substr($headers[0], 9, 3);
+    }
 
+}
 ?>
