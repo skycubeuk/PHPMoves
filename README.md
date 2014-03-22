@@ -7,11 +7,11 @@
 
 Get a request token URL:
 
-	$request_url = $m->request_url();
+	$request_url = $m->requestURL();
 
 Open the Moves app and enter the PIN, then you will be redirected the url specified in for the app. The next step is to use the code to get and access token:
 
-	$access_token = m->auth();
+	$access_token = $m->auth();
 
 Validate an access token, returns false if revoked:
 
