@@ -41,7 +41,7 @@ class Moves
         $u = $this->oauth_url . 'tokeninfo?access_token=' . $token;
         $r = $this->get_http_response_code($u);
         if ($r === "200") {
-            return json_decode(geturl($u), True);
+            return json_decode($this->geturl($u), True);
         } else {
             return False;
         }
@@ -60,7 +60,7 @@ class Moves
             ),
         );
         $context = stream_context_create($o);
-        $result = geturl($u, false, $context);
+        $result = $this->geturl($u, false, $context);
         $token = json_decode($result, True);
         return $token['access_token'];
     }
@@ -69,7 +69,7 @@ class Moves
     private function get($token, $endpoint)
     {
         $token = '?access_token=' . $token;
-        return json_decode(geturl($this->api_url . $endpoint . $token), True);
+        return json_decode($this->geturl($this->api_url . $endpoint . $token), True);
     }
 
     #/user/profile
