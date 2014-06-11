@@ -52,16 +52,16 @@ class Moves
     {
         $u = $this->oauth_url . "access_token";
         $d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
-        $o = array(
-            'http' => array(
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method' => 'POST',
-                'content' => http_build_query($d),
-            ),
-        );
-        $context = stream_context_create($o);
-        $result = $this->geturl($u, false, $context);
-        $token = json_decode($result, True);
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$u);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
+        // receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec ($ch);
+        curl_close ($ch);
+        $token = json_decode($result, true);
         return $token['access_token'];
     }
 
