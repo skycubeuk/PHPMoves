@@ -41,7 +41,7 @@ class Moves
         $u = $this->oauth_url . 'tokeninfo?access_token=' . $token;
         $r = $this->get_http_response_code($u);
         if ($r === "200") {
-            return json_decode(file_get_contents($u), True);
+            return json_decode($this->geturl($u), True);
         } else {
             return False;
         }
@@ -52,16 +52,16 @@ class Moves
     {
         $u = $this->oauth_url . "access_token";
         $d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
-        $o = array(
-            'http' => array(
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method' => 'POST',
-                'content' => http_build_query($d),
-            ),
-        );
-        $context = stream_context_create($o);
-        $result = file_get_contents($u, false, $context);
-        $token = json_decode($result, True);
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$u);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
+        // receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec ($ch);
+        curl_close ($ch);
+        $token = json_decode($result, true);
         return $token['access_token'];
     }
 
@@ -69,7 +69,7 @@ class Moves
     private function get($token, $endpoint)
     {
         $token = '?access_token=' . $token;
-        return json_decode(file_get_contents($this->api_url . $endpoint . $token), True);
+        return json_decode($this->geturl($this->api_url . $endpoint . $token), True);
     }
 
     #/user/profile
@@ -95,6 +95,14 @@ class Moves
     {
         $headers = get_headers($url);
         return substr($headers[0], 9, 3);
+    }
+
+    private function geturl($url){
+        $session = curl_init($url);
+        curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
+        $data = curl_exec($session);
+        curl_close($session);
+        return $data;
     }
 
 }
