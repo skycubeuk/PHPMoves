@@ -1,0 +1,26 @@
+{
+    "name": "zabouth/phpmoves",
+    "description": "Moves App API",
+    "type": "library",
+    "minimum-stability": "dev",
+    "keywords": [
+        "moves",
+        "php",
+        "zabouth"
+    ],
+    "homepage": "https://github.com/zabouth/PHPMoves",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Graeme Dyas"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPMoves\\": "./"
+        }
+    }
+}
