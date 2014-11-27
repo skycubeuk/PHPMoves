@@ -3,7 +3,7 @@
 
 ## Example Usage
 
-	$m = new Moves('client_id','client_secret','redirect_url');
+	$m = new PHPMoves\Moves('client_id','client_secret','redirect_url');
 
 Get a request token URL:
 
