@@ -31,7 +31,7 @@ class Moves
     {
         $u = $this->oauth_url . 'authorize?response_type=code';
         $c = '&client_id=' . urlencode($this->client_id);
-        $r = '&redirect_uri' . urlencode($this->redirect_url);
+        $r = '&redirect_uri=' . urlencode($this->redirect_url);
         $s = '&scope=' . urlencode('activity location'); # Assuming we want both activity and locations
         $url = $u . $c . $s . $r;
         return $url;
