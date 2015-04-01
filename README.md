@@ -1,36 +1,52 @@
 # PHPMoves, a PHP library for the Moves App API based on PyMoves
 
+##Workflow
 
-## Example Usage
+Create a new instance of the PHPMoves class using the client_id and client_secret provided by moves
+```php
+$m = new PHPMoves\Moves('client_id','client_secret','redirect_url');
+```
+Generate a request URL and present it to the user.
+```php
+$request_url = $m->requestURL();
+<a href="<?php echo $request_url; ?>">Click Here</a>
+```
+Once the user has authenticated successfully they will be redirected back to the redirect_url  with an authorization code included in the request. This code is passed to the auth method to obtain an access_token and  refresh_token. The access token will be used for all future API calles. The refresh_token is used to request a new access_token if the current token becomes invalid or expires.
+```php
+$request_token = $_GET['code'];
+$tokens = $m->auth($request_token);
+$access_token = $tokens['access_token'];
+$refresh_token = $tokens['refresh_token'];
+```
+The access_token can now be used to make API. 
+```php
+echo json_encode($m->get_profile($access_token));
+```
+##Class Methods
 
-	$m = new PHPMoves\Moves('client_id','client_secret','redirect_url');
+#####requestURL()
+Generates a URL for the move API authentication page.
 
-Get a request token URL:
+#####validate_token($access_token)
+Checks if an access_token is valid returns false if the token has been expired or revoked.
 
-	$request_url = $m->requestURL();
+#####auth($authorization_code)
+Exchanges an authorization code for an access token and refresh token. Returns an associative array containing both.
 
-Open the Moves app and enter the PIN, then you will be redirected the url specified in for the app. The next step is to use the code to get an access token and a refresh token:
-Returns: Associative array with 'access_token' and 'refresh_token' 
-	$tokens = $m->auth($authorization_code);
+#####refresh($refresh_token)
+Refreshes the access token and refresh token also expires both old tokens. Returns an associative array containing the updated tokens.
 
-Validate an access token, returns false if revoked:
+#####get_profile($access_token)
+Returns the users moves profile as an array.
 
-	$valid = $m->validate_token($tokens['access_token']);
+#####get_range($access_token, $endpoint, $start, $end, $otherParameters = array())
 
-If you have an access token you can make requests like:
+Used to fetch  API data between two date ranges ` $start ` and ` $end ` need to be a date in the format ` yyyyMMdd ` or ` yyyy-MM-dd `  the maximum request size is 7 days. Returns an array, see examples for usage.
+```php	
+$summary = $m->get_range($access_token,'/user/summary/daily', $start, $end)
+$activities = $m->get_range($access_token,'/user/activities/daily', $start, $end)
+$places = $m->get_range($access_token,'/user/places/daily', $start, $end)
+$storyline = $m->get_range($access_token,'/user/storyline/daily', $start, $end)
+```
 
-	$profile = $m->get_profile($access_token);
 
-Refresh an access token returns an associative array with  'access_token' and 'refresh_token' this invalidate your old Access Token and Refresh Token
-
-	$tokens = $m->refresh($refresh_token['refresh_token']);
-
-This will fetch all user info. Other requests are also built in, 
-	
-    $summary = $m->get_range($access_token,'/user/summary/daily', $start, $end)
-    $activities = $m->get_range($access_token,'/user/activities/daily', $start, $end)
-    $places = $m->get_range($access_token,'/user/places/daily', $start, $end)
-    $storyline = $m->get_range($access_token,'/user/storyline/daily', $start, $end)
-    
-Note: ` $start ` and ` $end ` need to be a date in the format ` yyyyMMdd ` or ` yyyy-MM-dd ` 
-also beware of the range requests as they have a limit of 7 days.
