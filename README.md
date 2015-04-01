@@ -22,4 +22,12 @@ If you have an access token you can make requests like:
 	$profile = $m->get_profile($access_token);
 
 
-This will fetch all user info. Other requests are also build in, but beware of the range requests as they have a limit of 7 days.
+This will fetch all user info. Other requests are also built in, 
+	
+    $summary = $m->get_range($access_token,'/user/summary/daily', $start, $end)
+    $activities = $m->get_range($access_token,'/user/activities/daily', $start, $end)
+    $places = $m->get_range($access_token,'/user/places/daily', $start, $end)
+    $storyline = $m->get_range($access_token,'/user/storyline/daily', $start, $end)
+    
+Note: ` $start ` and ` $end ` need to be a date in the format ` yyyyMMdd ` or ` yyyy-MM-dd ` 
+also beware of the range requests as they have a limit of 7 days.
