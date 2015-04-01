@@ -48,7 +48,7 @@
 		#Get access_token
 		public function auth($request_token) {
 			$u = $this->oauth_url . "access_token";
-			$d = ['grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url];
+			$d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
 
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $u);
@@ -63,15 +63,14 @@
 		}
 
 		#Base request
-		private function get($token, $endpoint) {
-			$token = '?access_token=' . $token;
-			return json_decode($this->geturl($this->api_url . $endpoint . $token), true);
+		private function get($parameters, $endpoint) {
+			return json_decode($this->geturl($this->api_url . $endpoint . '?' . http_build_query($parameters)), true);
 		}
 
 		#/user/profile
 		public function get_profile($token) {
 			$root = '/user/profile';
-			return $this->get($token, $root);
+			return $this->get(array('access_token' => $token), $root);
 		}
 
 		#Range requests
@@ -81,7 +80,12 @@
 		#/user/storyline/daily
 		#date: date in yyyyMMdd or yyyy-MM-dd format
 		public function get_range($access_token, $endpoint, $start, $end) {
-			$export = $this->get($access_token . '&from=' . $start . '&to=' . $end, $endpoint);
+			$requiredParameters = array(
+				'access_token' => $access_token,
+				'from'         => $start,
+				'to'           => $end
+			);
+			$export = $this->get($requiredParameters, $endpoint);
 			return $export;
 		}
 
