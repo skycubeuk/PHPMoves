@@ -79,14 +79,14 @@
 		#/user/places/daily
 		#/user/storyline/daily
 		#date: date in yyyyMMdd or yyyy-MM-dd format
-		public function get_range($access_token, $endpoint, $start, $end) {
+		public function get_range($access_token, $endpoint, $start, $end, $otherParameters = array()) {
 			$requiredParameters = array(
 				'access_token' => $access_token,
 				'from'         => $start,
 				'to'           => $end
 			);
-			$export = $this->get($requiredParameters, $endpoint);
-			return $export;
+			$parameters = array_merge($requiredParameters, $otherParameters);
+			return $this->get($parameters, $endpoint);
 		}
 
 		private function get_http_response_code($url) {
@@ -104,4 +104,4 @@
 
 	}
 
-?>
+	?>
