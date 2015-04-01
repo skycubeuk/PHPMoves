@@ -49,8 +49,7 @@
 		public function auth($request_token) {
 			$u = $this->oauth_url . "access_token";
 			$d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
-
-			$ch = curl_init();
+                        $ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $u);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
@@ -59,10 +58,28 @@
 			$result = curl_exec($ch);
 			curl_close($ch);
 			$token = json_decode($result, true);
-			return $token['access_token'];
+                        return array('access_token' => $token['access_token'],'refresh_token' =>  $token['refresh_token']);
 		}
 
-		#Base request
+                #Refresh access_token
+                public function refresh($refresh_token) {
+                        $u = $this->oauth_url . "access_token";
+                        $d = array('grant_type' => 'refresh_token', 'refresh_token' => $refresh_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret);
+                        $ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $u);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
+			// receive server response ...
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$result = curl_exec($ch);
+			curl_close($ch);
+			$token = json_decode($result, true);
+                        return array('access_token' => $token['access_token'],'refresh_token' =>  $token['refresh_token']);
+                }
+                        
+
+
+                #Base request
 		private function get($parameters, $endpoint) {
 			return json_decode($this->geturl($this->api_url . $endpoint . '?' . http_build_query($parameters)), true);
 		}
