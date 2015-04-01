@@ -46,35 +46,34 @@
 		}
 
 		#Get access_token
-		public function auth($request_token) {
-			$u = $this->oauth_url . "access_token";
-			$d = array('grant_type' => 'authorization_code', 'code' => $request_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret, 'redirect_uri' => $this->redirect_url);
-                        $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $u);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
-			// receive server response ...
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$result = curl_exec($ch);
-			curl_close($ch);
-			$token = json_decode($result, true);
-                        return array('access_token' => $token['access_token'],'refresh_token' =>  $token['refresh_token']);
-		}
+                public function auth($request_token) {
+                        return $this->auth_refresh($request_token, "authorization_code");
+                }
 
                 #Refresh access_token
+
                 public function refresh($refresh_token) {
+                        return $this->auth_refresh($refresh_token, "refresh_token");
+                }
+
+                private function auth_refresh($token, $type) {
                         $u = $this->oauth_url . "access_token";
-                        $d = array('grant_type' => 'refresh_token', 'refresh_token' => $refresh_token, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret);
+                        $d = array('grant_type' => $type, 'client_id' => $this->client_id, 'client_secret' => $this->client_secret);
+                        if ($type === "authorization_code") {
+                                $d['code'] = $token;
+                                $d['redirect_uri'] = $this->redirect_url;
+                        } elseif ($type === "refresh_token") {
+                                $d['refresh_token'] = $token;
+                        }
                         $ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $u);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
-			// receive server response ...
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$result = curl_exec($ch);
-			curl_close($ch);
-			$token = json_decode($result, true);
-                        return array('access_token' => $token['access_token'],'refresh_token' =>  $token['refresh_token']);
+                        curl_setopt($ch, CURLOPT_URL, $u);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($d));
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        $result = curl_exec($ch);
+                        curl_close($ch);
+                        $token = json_decode($result, True);
+                        return array('access_token' => $token['access_token'], 'refresh_token' => $token['refresh_token']);
                 }
                         
 
