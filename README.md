@@ -23,7 +23,7 @@ If you have an access token you can make requests like:
 
 Refresh an access token returns an associative array with  'access_token' and 'refresh_token' this invalidate your old Access Token and Refresh Token
 
-	$tokens = $->refresh($refresh_token['refresh_token']);
+	$tokens = $m->refresh($refresh_token['refresh_token']);
 
 This will fetch all user info. Other requests are also built in, 
 	
