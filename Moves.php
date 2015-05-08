@@ -9,6 +9,8 @@
 		public $api_url;
 		public $redirect_url;
 		public $oauth_url;
+        protected $send_header_info = array();
+        protected $receive_header_info = array();
 
 		public function __construct
 		(
@@ -113,11 +115,60 @@
 		private function geturl($url) {
 			$session = curl_init($url);
 			curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
-			$data = curl_exec($session);
+            // Retrieve both data and header
+            curl_setopt($session, CURLOPT_HEADER, 1);
+            //curl_setopt($session, CURLOPT_VERBOSE, true);
+
+            if (!empty($this->send_header_info)) {
+                curl_setopt($session, CURLOPT_HTTPHEADER, $this->send_header_info);
+            }
+
+            $data = curl_exec($session);
+
+            // Split de header and data
+            $header_size = curl_getinfo($session, CURLINFO_HEADER_SIZE);
+            $headers = substr($data, 0, $header_size);
+            if ($headers) {
+                $this->receive_header_info = $this->get_headers_from_curl_response($headers);
+            } else {
+                $this->receive_header_info = array();
+            }
+            $body = substr($data, $header_size);
+
 			curl_close($session);
-			return $data;
+			return $body;
 		}
 
-	}
+        private function get_headers_from_curl_response($header_text)
+        {
+            $headers = array();
 
-	?>
+            foreach (explode("\r\n", $header_text) as $i => $line)
+                if ($i === 0)
+                    $headers['http_code'] = $line;
+                else {
+                    if (strpos($line, ":") !== false) {
+                        list ($key, $value) = explode(': ', $line);
+                        $headers[$key] = $value;
+                    }
+                }
+
+            return $headers;
+        }
+
+        public function getHeader($key = null) {
+            if (empty($key)) {
+                return $this->receive_header_info;
+            }
+            return $this->receive_header_info[$key];
+        }
+
+        public function setHeader($values = array()) {
+            if (!empty($values)) {
+                $this->send_header_info = $values;
+            } else {
+                $this->send_header_info = array();
+            }
+        }
+
+	}
