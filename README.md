@@ -41,6 +41,7 @@ Returns the users moves profile as an array.
 
 #####get_range($access_token, $endpoint, $start, $end, $otherParameters = array())
 
+
 Used to fetch  API data between two date ranges ` $start ` and ` $end ` need to be a date in the format ` yyyyMMdd ` or ` yyyy-MM-dd `  the maximum request size is 7 days. Returns an array, see examples for usage.
 ```php	
 $summary = $m->get_range($access_token,'/user/summary/daily', $start, $end)
