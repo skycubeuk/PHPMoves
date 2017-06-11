@@ -1,6 +1,6 @@
 # PHPMoves, a PHP library for the Moves App API based on PyMoves
 
-##Workflow
+## Workflow
 
 Create a new instance of the PHPMoves class using the client_id and client_secret provided by moves
 ```php
@@ -22,24 +22,24 @@ The access_token can now be used to make API.
 ```php
 echo json_encode($m->get_profile($access_token));
 ```
-##Class Methods
+## Class Methods
 
-#####requestURL()
+##### requestURL()
 Generates a URL for the move API authentication page.
 
-#####validate_token($access_token)
+##### validate_token($access_token)
 Checks if an access_token is valid returns false if the token has been expired or revoked.
 
-#####auth($authorization_code)
+##### auth($authorization_code)
 Exchanges an authorization code for an access token and refresh token. Returns an associative array containing both.
 
-#####refresh($refresh_token)
+##### refresh($refresh_token)
 Refreshes the access token and refresh token also expires both old tokens. Returns an associative array containing the updated tokens.
 
-#####get_profile($access_token)
+##### get_profile($access_token)
 Returns the users moves profile as an array.
 
-#####get_range($access_token, $endpoint, $start, $end, $otherParameters = array())
+##### get_range($access_token, $endpoint, $start, $end, $otherParameters = array())
 
 
 Used to fetch  API data between two date ranges ` $start ` and ` $end ` need to be a date in the format ` yyyyMMdd ` or ` yyyy-MM-dd `  the maximum request size is 7 days. Returns an array, see examples for usage.
