@@ -1,3 +1,11 @@
+# Moves ended its service on 31st July 2018. This project is no longer of any use and will be archived. 
+
+
+
+
+
+
+
 # PHPMoves, a PHP library for the Moves App API based on PyMoves
 
 ## Workflow
